@@ -1,26 +1,20 @@
 import express from "express";
 import passport from "../../config/passport.js";
-import { generateAccessToken } from "../../utils/token.js";
+import { googleCallback } from "./auth.controller.js";
 
 const router = express.Router();
 
+// Redirect user to Google OAuth
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
+// Google redirects back here after login
 router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),
-  (req, res) => {
-    const token = generateAccessToken(req.user);
-
-    res.json({
-      message: "Authentication successful",
-      token,
-      user: req.user
-    });
-  }
+  googleCallback
 );
 
 export default router;
